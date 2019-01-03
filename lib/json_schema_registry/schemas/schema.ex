@@ -1,10 +1,10 @@
 defmodule JsonSchemaRegistry.Schemas.Schema do
   use Ecto.Schema
   import Ecto.Changeset
-  import JsonSchemaRegistry.Schemas.Validator, only: [valid_json_schema?: 1]
+  import JsonSchemaRegistry.Schemas.Validator, only: [valid_json_schema?: 1, validate_json_schema: 1]
 
   schema "schemas" do
-    field :content, :string
+    field :content, :map
     field :name, :string
     field :namespace, :string
     field :version, :integer
@@ -17,12 +17,11 @@ defmodule JsonSchemaRegistry.Schemas.Schema do
     schema
     |> cast(attrs, [:name, :version, :namespace, :content])
     |> validate_required([:name, :version, :namespace, :content])
-
-    # |> validate_content
+    |> validate_content
   end
 
   def validate_content(changeset) do
-    validate_change(changeset, :content, fn _, body ->
+    validate_change(changeset, :content, fn(:content, body) ->
       if valid_json_schema?(body) do
         []
       else

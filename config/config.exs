@@ -8,7 +8,8 @@
 use Mix.Config
 
 config :json_schema_registry,
-  ecto_repos: [JsonSchemaRegistry.Repo]
+  ecto_repos: [JsonSchemaRegistry.Repo],
+  types: JsonSchemaRegistry.PostgrexTypes
 
 # Configures the endpoint
 config :json_schema_registry, JsonSchemaRegistryWeb.Endpoint,
@@ -24,6 +25,8 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :ecto, json_library: Jason
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

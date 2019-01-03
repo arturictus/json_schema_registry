@@ -6,7 +6,7 @@ defmodule JsonSchemaRegistry.Repo.Migrations.CreateSchemas do
       add :name, :string
       add :version, :integer
       add :namespace, :string
-      add :content, :text
+      add :content, :map
 
       timestamps()
     end

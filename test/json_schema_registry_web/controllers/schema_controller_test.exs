@@ -3,15 +3,17 @@ defmodule JsonSchemaRegistryWeb.SchemaControllerTest do
 
   alias JsonSchemaRegistry.Schemas
   alias JsonSchemaRegistry.Schemas.Schema
+  @valid_json_schema %{"type" => "string"}
+  @invalid_json_schema %{"foo" => "bar"}
 
   @create_attrs %{
-    content: "some content",
+    content: @valid_json_schema,
     name: "some name",
     namespace: "some namespace",
     version: 42
   }
   @update_attrs %{
-    content: "some updated content",
+    content: %{"type" => "number"},
     name: "some updated name",
     namespace: "some updated namespace",
     version: 43
@@ -43,7 +45,7 @@ defmodule JsonSchemaRegistryWeb.SchemaControllerTest do
 
       assert %{
                "id" => id,
-               "content" => "some content",
+               "content" => @valid_json_schema,
                "name" => "some name",
                "namespace" => "some namespace",
                "version" => 42
@@ -67,7 +69,7 @@ defmodule JsonSchemaRegistryWeb.SchemaControllerTest do
 
       assert %{
                "id" => id,
-               "content" => "some updated content",
+               "content" => %{ "type" => "number"},
                "name" => "some updated name",
                "namespace" => "some updated namespace",
                "version" => 43
