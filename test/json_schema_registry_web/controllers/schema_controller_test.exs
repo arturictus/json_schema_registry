@@ -3,25 +3,10 @@ defmodule JsonSchemaRegistryWeb.SchemaControllerTest do
 
   alias JsonSchemaRegistry.Schemas
   alias JsonSchemaRegistry.Schemas.Schema
-  @valid_json_schema %{"type" => "string"}
-  @invalid_json_schema %{"foo" => "bar"}
-
-  @create_attrs %{
-    content: @valid_json_schema,
-    name: "some-name",
-    namespace: "some-namespace",
-    version: 42
-  }
-  @update_attrs %{
-    content: %{"type" => "number"},
-    name: "some-updated-name",
-    namespace: "some-updated-namespace",
-    version: 43
-  }
-  @invalid_attrs %{content: nil, name: nil, namespace: nil, version: nil}
+  import JsonSchemaRegistryWeb.SchemaFixtures
 
   def fixture(:schema) do
-    {:ok, schema} = Schemas.create_schema(@create_attrs)
+    {:ok, schema} = Schemas.create_schema(valid_attrs())
     schema
   end
 
@@ -38,22 +23,23 @@ defmodule JsonSchemaRegistryWeb.SchemaControllerTest do
 
   describe "create schema" do
     test "renders schema when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.schema_path(conn, :create), schema: @create_attrs)
+      conn = post(conn, Routes.schema_path(conn, :create), schema: valid_attrs())
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.schema_path(conn, :show, id))
+      json_schema = valid_json_schema()
 
       assert %{
                "id" => id,
-               "content" => @valid_json_schema,
+               "content" => json_schema,
                "name" => "some-name",
                "namespace" => "some-namespace",
-               "version" => 42
+               "version" => 1
              } = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.schema_path(conn, :create), schema: @invalid_attrs)
+      conn = post(conn, Routes.schema_path(conn, :create), schema: invalid_attrs())
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -62,7 +48,7 @@ defmodule JsonSchemaRegistryWeb.SchemaControllerTest do
     setup [:create_schema]
 
     test "renders schema when data is valid", %{conn: conn, schema: %Schema{id: id} = schema} do
-      conn = put(conn, Routes.schema_path(conn, :update, schema), schema: @update_attrs)
+      conn = put(conn, Routes.schema_path(conn, :update, schema), schema: update_attrs())
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, Routes.schema_path(conn, :show, id))
@@ -77,7 +63,7 @@ defmodule JsonSchemaRegistryWeb.SchemaControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, schema: schema} do
-      conn = put(conn, Routes.schema_path(conn, :update, schema), schema: @invalid_attrs)
+      conn = put(conn, Routes.schema_path(conn, :update, schema), schema: invalid_attrs())
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
