@@ -9,3 +9,4 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+JsonSchemaRegistry.Schemas.create_schema(%{name: "example", namespace: "tutorial", content: %{ "type" => "string"}, version: 1})

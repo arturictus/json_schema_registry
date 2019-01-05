@@ -37,7 +37,7 @@ defmodule JsonSchemaRegistry.Schemas.Validator do
       {:error, [{"Type mismatch. Expected Object but got Integer.", "#"}]}
   """
   def validate_json_schema(schema) do
-    meta_schema
+    meta_schema()
     |> validate(schema)
   end
 

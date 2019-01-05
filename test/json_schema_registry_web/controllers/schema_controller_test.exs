@@ -8,14 +8,14 @@ defmodule JsonSchemaRegistryWeb.SchemaControllerTest do
 
   @create_attrs %{
     content: @valid_json_schema,
-    name: "some name",
-    namespace: "some namespace",
+    name: "some-name",
+    namespace: "some-namespace",
     version: 42
   }
   @update_attrs %{
     content: %{"type" => "number"},
-    name: "some updated name",
-    namespace: "some updated namespace",
+    name: "some-updated-name",
+    namespace: "some-updated-namespace",
     version: 43
   }
   @invalid_attrs %{content: nil, name: nil, namespace: nil, version: nil}
@@ -46,8 +46,8 @@ defmodule JsonSchemaRegistryWeb.SchemaControllerTest do
       assert %{
                "id" => id,
                "content" => @valid_json_schema,
-               "name" => "some name",
-               "namespace" => "some namespace",
+               "name" => "some-name",
+               "namespace" => "some-namespace",
                "version" => 42
              } = json_response(conn, 200)["data"]
     end
@@ -70,8 +70,8 @@ defmodule JsonSchemaRegistryWeb.SchemaControllerTest do
       assert %{
                "id" => id,
                "content" => %{ "type" => "number"},
-               "name" => "some updated name",
-               "namespace" => "some updated namespace",
+               "name" => "some-updated-name",
+               "namespace" => "some-updated-namespace",
                "version" => 43
              } = json_response(conn, 200)["data"]
     end
