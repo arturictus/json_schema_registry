@@ -37,6 +37,13 @@ defmodule JsonSchemaRegistry.SchemasTest do
       assert Schemas.get_schema!(schema.namespace, schema.name, schema.version) == schema
     end
 
+    test "get_schema/2 returns schema by namespace and name or nil" do
+      schema = schema_fixture()
+      schema_2 = schema_fixture(%{version: 2, content: %{"type" => "number"}})
+      assert Schemas.get_schema(schema.namespace, schema.name) == schema_2
+      assert Schemas.get_schema(schema.namespace, "not-existent") == nil
+    end
+
     test "create_schema/1 with valid data creates a schema" do
       assert {:ok, %Schema{} = schema} = Schemas.create_schema(valid_attrs())
       assert schema.content == valid_attrs().content

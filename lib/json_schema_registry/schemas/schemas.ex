@@ -44,8 +44,19 @@ defmodule JsonSchemaRegistry.Schemas do
     Repo.get_by!(Schema, namespace: namespace, name: name, version: version)
   end
 
+  def get_schema(namespace, name) do
+    q = from s in schema_q(namespace, name), order_by: [desc: s.version], limit: 1
+    Repo.one(q)
+  end
+
   defp schema_q(namespace, name) do
     from s in Schema, where: s.namespace == ^namespace and s.name == ^name
+  end
+
+  # TODO: test
+  def get_all(namespace, name) do
+    schema_q(namespace, name)
+    |> Repo.all()
   end
 
   @doc """
@@ -64,6 +75,16 @@ defmodule JsonSchemaRegistry.Schemas do
     %Schema{}
     |> Schema.changeset(attrs)
     |> Repo.insert()
+  end
+
+  # TODO: test
+  def create_or_update(namespace, name, content) do
+    exists = get_schema(namespace, name)
+    if exists do
+      update_schema(namespace, name, content)
+    else
+      create_schema(%{ namespace: namespace, name: name, content: content})
+    end
   end
 
   @doc """

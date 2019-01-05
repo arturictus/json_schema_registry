@@ -4,4 +4,10 @@ defmodule JsonSchemaRegistryWeb.RepoView do
   def render("show.json", %{schema: schema}) do
     schema.content
   end
+
+  def render("errors.json", %{ changeset: changeset }) do
+    %{
+      errors: inspect(changeset.errors)
+    }
+  end
 end
