@@ -20,6 +20,7 @@ defmodule JsonSchemaRegistry.Schemas.Schema do
     |> validate_content
     |> validate_identifier(:name)
     |> validate_identifier(:namespace)
+    |> unique_constraint(:name, name: :schemas_namespace_name_version_index)
   end
 
   def validate_identifier(changeset, field) do

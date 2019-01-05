@@ -52,6 +52,13 @@ defmodule JsonSchemaRegistry.SchemasTest do
       assert {:error, %Ecto.Changeset{}} = Schemas.create_schema(@invalid_attrs)
     end
 
+    test "create_schema/1 unique constrain for namespace name version" do
+      assert Schemas.create_schema(@valid_attrs)
+      Schemas.create_schema(@valid_attrs)
+      assert Enum.count(Schemas.list_schemas()) == 1
+      assert {:error, %Ecto.Changeset{}} = Schemas.create_schema(@valid_attrs)
+    end
+
     test "update_schema/2 with valid data updates the schema" do
       schema = schema_fixture()
       assert {:ok, %Schema{} = schema} = Schemas.update_schema(schema, @update_attrs)
