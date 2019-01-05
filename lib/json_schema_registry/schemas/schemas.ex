@@ -39,6 +39,9 @@ defmodule JsonSchemaRegistry.Schemas do
   def get_schema!(namespace, name) do
     Repo.get_by!(Schema, namespace: namespace, name: name)
   end
+  def get_schema!(namespace, name, version) do
+    Repo.get_by!(Schema, namespace: namespace, name: name, version: version)
+  end
 
   @doc """
   Creates a schema.
