@@ -11,13 +11,13 @@ defmodule JsonSchemaRegistry.SchemasTest do
       content: @valid_json_schema,
       name: "some-name",
       namespace: "some-namespace",
-      version: 42
+      # version: 42
     }
     @update_attrs %{
       content: %{"type" => "number"},
       name: "some-updated-name",
       namespace: "some-updated-namespace",
-      version: 43
+      # version: 43
     }
     @invalid_attrs %{content: nil, name: nil, namespace: nil, version: nil}
 
@@ -40,12 +40,17 @@ defmodule JsonSchemaRegistry.SchemasTest do
       assert Schemas.get_schema!(schema.id) == schema
     end
 
+    test "get_schema/2 returns the schema by namespace and name" do
+      schema = schema_fixture()
+      assert Schemas.get_schema!(schema.namespace, schema.name) == schema
+    end
+
     test "create_schema/1 with valid data creates a schema" do
       assert {:ok, %Schema{} = schema} = Schemas.create_schema(@valid_attrs)
       assert schema.content == @valid_json_schema
       assert schema.name == "some-name"
       assert schema.namespace == "some-namespace"
-      assert schema.version == 42
+      assert schema.version == 1
     end
 
     test "create_schema/1 with invalid data returns error changeset" do
@@ -54,9 +59,8 @@ defmodule JsonSchemaRegistry.SchemasTest do
 
     test "create_schema/1 unique constrain for namespace name version" do
       assert Schemas.create_schema(@valid_attrs)
-      Schemas.create_schema(@valid_attrs)
-      assert Enum.count(Schemas.list_schemas()) == 1
       assert {:error, %Ecto.Changeset{}} = Schemas.create_schema(@valid_attrs)
+      assert Enum.count(Schemas.list_schemas()) == 1
     end
 
     test "update_schema/2 with valid data updates the schema" do
@@ -65,7 +69,7 @@ defmodule JsonSchemaRegistry.SchemasTest do
       assert schema.content == %{ "type" => "number" }
       assert schema.name == "some-updated-name"
       assert schema.namespace == "some-updated-namespace"
-      assert schema.version == 43
+      assert schema.version == 1
     end
 
     test "update_schema/2 with invalid data returns error changeset" do

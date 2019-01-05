@@ -36,6 +36,9 @@ defmodule JsonSchemaRegistry.Schemas do
 
   """
   def get_schema!(id), do: Repo.get!(Schema, id)
+  def get_schema!(namespace, name) do
+    Repo.get_by!(Schema, namespace: namespace, name: name)
+  end
 
   @doc """
   Creates a schema.
@@ -68,6 +71,9 @@ defmodule JsonSchemaRegistry.Schemas do
 
   """
   def update_schema(%Schema{} = schema, attrs) do
+    # TODO: bump schema version do not update exisiting schema
+    # - Find schema by namespace and name
+    # - Bump version and create a new one
     schema
     |> Schema.changeset(attrs)
     |> Repo.update()

@@ -6,8 +6,8 @@ defmodule JsonSchemaRegistry.Schemas.Schema do
   schema "schemas" do
     field :content, :map
     field :name, :string
-    field :namespace, :string
-    field :version, :integer
+    field :namespace, :string, default: "default"
+    field :version, :integer, default: 1
 
     timestamps()
   end
