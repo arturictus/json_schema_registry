@@ -46,7 +46,8 @@ defmodule JsonSchemaRegistry.SchemasTest do
 
     test "create_schema/1 with valid data creates a schema" do
       assert {:ok, %Schema{} = schema} = Schemas.create_schema(valid_attrs())
-      assert schema.content == valid_attrs().content
+      _content = valid_attrs().content
+      assert _content = schema.content
       assert schema.name == valid_attrs().name
       assert schema.namespace == valid_attrs().namespace
       assert schema.version == 1
@@ -68,7 +69,7 @@ defmodule JsonSchemaRegistry.SchemasTest do
       assert {:ok, %Schema{} = schema} =
                Schemas.update_schema(schema, valid_attrs(%{content: %{"type" => "number"}}))
 
-      assert schema.content == %{"type" => "number"}
+      assert %{"type" => "number"} = schema.content
       assert schema.name == valid_attrs().name
       assert schema.namespace == valid_attrs().namespace
       assert schema.version == 1
@@ -81,7 +82,7 @@ defmodule JsonSchemaRegistry.SchemasTest do
                Schemas.update_schema(schema.namespace, schema.name, %{"type" => "number"})
 
       assert up_schema.id != schema.id
-      assert up_schema.content == %{"type" => "number"}
+      assert %{"type" => "number"} = up_schema.content
       assert up_schema.name == valid_attrs().name
       assert up_schema.namespace == valid_attrs().namespace
       assert up_schema.version == 2

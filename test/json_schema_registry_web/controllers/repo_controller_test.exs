@@ -78,6 +78,7 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
       assert %Schema{} = Schemas.get_schema!(schema.namespace, schema.name)
     end
 
+    @tag :skip
     test "when exists creates error", %{conn: conn} do
       schema = fixture(:schema)
 

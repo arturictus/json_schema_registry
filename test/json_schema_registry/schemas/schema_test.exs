@@ -16,13 +16,20 @@ defmodule JsonSchemaRegistry.SchemaTest do
       assert %{version: 1, namespace: "default"} = chs.data
     end
 
-    @tag :skip
+    test "sets $id in the schema" do
+      attrs = valid_attrs()
+      chs = changeset(attrs)
+      assert chs.valid?
+      %Schema{content: %{"$id" => id }} = Repo.insert!(chs)
+      assert id =~ "$DOMAIN/#{attrs.namespace}/#{attrs.name}"
+    end
+
     test "unique constrain for [:namespace, :name, :version]" do
       chs = changeset(valid_attrs())
       assert {:ok, %Schema{}} = Repo.insert(chs)
       n_chs = changeset(valid_attrs())
-      refute n_chs.valid?
-      # assert {:error, %Ecto.Changeset{}} = Schemas.create_schema(valid_attrs())
+      assert {:error, changeset} = Repo.insert(n_chs)
+      assert [name: {"has already been taken", _}] = changeset.errors
     end
   end
 end

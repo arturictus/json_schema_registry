@@ -19,10 +19,11 @@ defmodule JsonSchemaRegistry.Schemas.Schema do
     schema
     |> cast(attrs, [:name, :version, :namespace, :content])
     |> validate_required([:name, :version, :namespace, :content])
-    |> validate_content
     |> validate_identifier(:name)
     |> validate_identifier(:namespace)
+    |> validate_content()
     |> unique_constraint(:name, name: :schemas_namespace_name_version_index)
+    |> prepare_changes(fn changeset -> prepare_content(changeset) end)
   end
 
   def validate_identifier(changeset, field) do
@@ -39,5 +40,16 @@ defmodule JsonSchemaRegistry.Schemas.Schema do
           {:error, error} -> [:content, error]
         end
     end)
+  end
+
+  def prepare_content(changeset) do
+    namespace = get_field(changeset, :namespace)
+    name = get_field(changeset, :name)
+    version = get_field(changeset, :version)
+    change = %{ "$id" => "$DOMAIN/#{namespace}/#{name}/#{version}" }
+    content = get_field(changeset, :content)
+              |> Map.merge(change)
+    changeset
+    |> put_change(:content, content)
   end
 end
