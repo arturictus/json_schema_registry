@@ -3,7 +3,7 @@ defmodule JsonSchemaRegistry.Schemas.Schema do
   import Ecto.Changeset
 
   import JsonSchemaRegistry.Schemas.Validator,
-    only: [valid_json_schema?: 1, validate_json_schema: 1]
+    only: [validate_json_schema: 1]
 
   schema "schemas" do
     field :content, :map
@@ -32,8 +32,8 @@ defmodule JsonSchemaRegistry.Schemas.Schema do
   end
 
   def validate_content(changeset) do
-    validate_change(changeset, :content, fn :content, body ->
-      case validate_json_schema(body) do
+    validate_change(changeset, :content, fn :content, content ->
+      case validate_json_schema(content) do
         :ok -> []
         {:error, error} -> [:content, error]
       end

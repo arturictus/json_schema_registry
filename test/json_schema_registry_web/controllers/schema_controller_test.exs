@@ -27,11 +27,11 @@ defmodule JsonSchemaRegistryWeb.SchemaControllerTest do
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.schema_path(conn, :show, id))
-      json_schema = valid_json_schema()
+      _json_schema = valid_json_schema()
 
       assert %{
                "id" => id,
-               "content" => json_schema,
+               "content" => _json_schema,
                "name" => "some-name",
                "namespace" => "some-namespace",
                "version" => 1

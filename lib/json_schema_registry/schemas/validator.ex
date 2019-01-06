@@ -11,20 +11,12 @@ defmodule JsonSchemaRegistry.Schemas.Validator do
       iex> JsonSchemaRegistry.Schemas.Validator.valid_json_schema?(%{"type" => "string"})
       true
   """
-  def valid_json_schema?(content) when is_bitstring(content) do
-    case Jason.decode(content) do
-      {:ok, map} -> valid_json_schema?(map)
+  def valid_json_schema?(content) do
+    case validate_json_schema(content) do
+      :ok -> true
       _ -> false
     end
   end
-
-  def valid_json_schema?(content) when is_map(content) do
-    meta_schema()
-    |> ExJsonSchema.Schema.resolve()
-    |> ExJsonSchema.Validator.valid?(content)
-  end
-
-  def valid_json_schema?(_), do: false
 
   @doc ~S"""
   validates schema against meta-schema
@@ -33,12 +25,40 @@ defmodule JsonSchemaRegistry.Schemas.Validator do
 
       iex> JsonSchemaRegistry.Schemas.Validator.validate_json_schema(%{"type" => "string"})
       :ok
-      iex> JsonSchemaRegistry.Schemas.Validator.validate_json_schema(1)
-      {:error, [{"Type mismatch. Expected Object but got Integer.", "#"}]}
+      iex> r = JsonSchemaRegistry.Schemas.Validator.validate_json_schema(1)
+      iex> match?({:error, _}, r)
+      true
   """
-  def validate_json_schema(schema) do
-    meta_schema()
-    |> validate(schema)
+  def validate_json_schema(schema) when is_bitstring(schema) do
+    case Jason.decode(schema) do
+      {:ok, map} -> validate_json_schema(map)
+      _ -> {:error, "Unable to decode JSON"}
+    end
+  end
+
+  def validate_json_schema(schema) when is_map(schema) do
+    with :ok <- meta_schema() |> validate(schema),
+         :ok <- validate_json_schema(schema, :type) do
+      :ok
+    else
+      error -> error
+    end
+  end
+
+  def validate_json_schema(_) do
+    {:error, [{"schema is not a map", "#"}]}
+  end
+
+  def validate_json_schema(schema, :type) when is_map(schema) do
+    if Map.has_key?(schema, "type") do
+      :ok
+    else
+      {:error, [{"schema must contain property `type`", "#"}]}
+    end
+  end
+
+  def validate_json_schema(_, :type) do
+    {:error, [{"schema is not a map", "#"}]}
   end
 
   @doc ~S"""

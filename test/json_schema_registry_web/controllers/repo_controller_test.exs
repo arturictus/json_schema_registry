@@ -24,8 +24,8 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
     test "When exists returns the json_schema", %{conn: conn} do
       schema = fixture(:schema)
       conn = get(conn, Routes.repo_path(conn, :get, schema.namespace, schema.name))
-      body = schema.content
-      assert body = json_response(conn, 200)
+      _body = schema.content
+      assert _body = json_response(conn, 200)
     end
   end
 
@@ -45,13 +45,13 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
           Routes.repo_path(conn, :get_version, schema.namespace, schema.name, schema.version)
         )
 
-      body = schema.content
-      assert body = json_response(conn, 200)
+      _body = schema.content
+      assert _body = json_response(conn, 200)
     end
   end
 
   describe "create" do
-    test "when does not exist creates one" do
+    test "when does not exist creates one", %{conn: conn} do
       attrs = valid_attrs()
 
       conn =
@@ -60,12 +60,12 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
           Routes.repo_path(conn, :create, attrs.namespace, attrs.name, content: attrs.content)
         )
 
-      body = attrs.content
-      assert body = json_response(conn, 200)
+      _body = attrs.content
+      assert _body = json_response(conn, 200)
       assert %Schema{} = Schemas.get_schema!(attrs.namespace, attrs.name)
     end
 
-    test "when exists creates one with bumped version" do
+    test "when exists creates one with bumped version", %{conn: conn} do
       schema = fixture(:schema)
 
       conn =
@@ -80,7 +80,7 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
       assert %Schema{} = Schemas.get_schema!(schema.namespace, schema.name)
     end
 
-    test "when exists creates error" do
+    test "when exists creates error", %{conn: conn} do
       schema = fixture(:schema)
 
       conn =
@@ -91,8 +91,8 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
     end
   end
 
-  defp create_schema(_) do
-    schema = fixture(:schema)
-    {:ok, schema: schema}
-  end
+  # defp create_schema(_) do
+  #   schema = fixture(:schema)
+  #   {:ok, schema: schema}
+  # end
 end
