@@ -3,8 +3,8 @@ defmodule JsonSchemaRegistry.SchemaTest do
 
   alias JsonSchemaRegistry.Schemas.Schema
   import JsonSchemaRegistryWeb.SchemaFixtures
-  describe "schema" do
 
+  describe "schema" do
     def changeset(attrs) do
       %Schema{}
       |> Schema.changeset(attrs)
@@ -13,7 +13,7 @@ defmodule JsonSchemaRegistry.SchemaTest do
     test "defaults [:namespace, :version]" do
       chs = changeset(valid_attrs())
       assert chs.valid?
-      assert %{version: 1, namespace: "default" } = chs.data
+      assert %{version: 1, namespace: "default"} = chs.data
     end
 
     @tag :skip

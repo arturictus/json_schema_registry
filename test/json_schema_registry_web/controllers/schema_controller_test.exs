@@ -55,7 +55,7 @@ defmodule JsonSchemaRegistryWeb.SchemaControllerTest do
 
       assert %{
                "id" => id,
-               "content" => %{ "type" => "number"},
+               "content" => %{"type" => "number"},
                "name" => "some-updated-name",
                "namespace" => "some-updated-namespace",
                "version" => 43

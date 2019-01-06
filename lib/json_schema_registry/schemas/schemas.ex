@@ -36,10 +36,12 @@ defmodule JsonSchemaRegistry.Schemas do
 
   """
   def get_schema!(id), do: Repo.get!(Schema, id)
+
   def get_schema!(namespace, name) do
     q = from s in schema_q(namespace, name), order_by: [desc: s.version], limit: 1
     Repo.one!(q)
   end
+
   def get_schema!(namespace, name, version) do
     Repo.get_by!(Schema, namespace: namespace, name: name, version: version)
   end
@@ -80,10 +82,11 @@ defmodule JsonSchemaRegistry.Schemas do
   # TODO: test
   def create_or_update(namespace, name, content) do
     exists = get_schema(namespace, name)
+
     if exists do
       update_schema(namespace, name, content)
     else
-      create_schema(%{ namespace: namespace, name: name, content: content})
+      create_schema(%{namespace: namespace, name: name, content: content})
     end
   end
 
@@ -107,7 +110,13 @@ defmodule JsonSchemaRegistry.Schemas do
 
   def update_schema(namespace, name, content) do
     prev = get_schema!(namespace, name)
-    create_schema(%{namespace: prev.namespace, name: prev.name, version: prev.version + 1, content: content})
+
+    create_schema(%{
+      namespace: prev.namespace,
+      name: prev.name,
+      version: prev.version + 1,
+      content: content
+    })
   end
 
   @doc """
@@ -125,10 +134,12 @@ defmodule JsonSchemaRegistry.Schemas do
   def delete_schema(%Schema{} = schema) do
     Repo.delete(schema)
   end
+
   def delete_schema(namespace, name) do
     schema_q(namespace, name)
     |> Repo.delete_all()
   end
+
   def delete_schema(namespace, name, version) do
     get_schema!(namespace, name, version)
     |> Repo.delete!()

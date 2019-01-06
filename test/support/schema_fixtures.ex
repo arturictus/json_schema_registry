@@ -1,11 +1,13 @@
 defmodule JsonSchemaRegistryWeb.SchemaFixtures do
-
   def valid_attrs(attrs \\ %{}) do
-    Map.merge(%{
-      content: valid_json_schema(),
-      name: "some-name",
-      namespace: "some-namespace",
-    }, attrs)
+    Map.merge(
+      %{
+        content: valid_json_schema(),
+        name: "some-name",
+        namespace: "some-namespace"
+      },
+      attrs
+    )
   end
 
   def invalid_attrs(attrs \\ %{}) do

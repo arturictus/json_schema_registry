@@ -17,11 +17,13 @@ defmodule JsonSchemaRegistryWeb.RepoController do
     render(conn, "show.json", schema: schema)
   end
 
-  def create(conn, %{"content" => content } = params) do
+  def create(conn, %{"content" => content} = params) do
     %{"namespace" => namespace, "name" => name} = conn.path_params
+
     case Schemas.create_or_update(namespace, name, content) do
       {:ok, schema} ->
         render(conn, "show.json", schema: schema)
+
       {:error, changeset} ->
         put_status(conn, 400)
         |> render("errors.json", changeset: changeset)

@@ -10,6 +10,7 @@ defmodule JsonSchemaRegistry.Repo.Migrations.CreateSchemas do
 
       timestamps()
     end
+
     create unique_index(:schemas, [:namespace, :name, :version])
   end
 end

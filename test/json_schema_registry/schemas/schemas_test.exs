@@ -64,8 +64,11 @@ defmodule JsonSchemaRegistry.SchemasTest do
 
     test "update_schema/2 with valid data updates the schema" do
       schema = schema_fixture()
-      assert {:ok, %Schema{} = schema} = Schemas.update_schema(schema, valid_attrs(%{content: %{ "type" => "number" }}))
-      assert schema.content == %{ "type" => "number" }
+
+      assert {:ok, %Schema{} = schema} =
+               Schemas.update_schema(schema, valid_attrs(%{content: %{"type" => "number"}}))
+
+      assert schema.content == %{"type" => "number"}
       assert schema.name == valid_attrs().name
       assert schema.namespace == valid_attrs().namespace
       assert schema.version == 1
@@ -73,9 +76,12 @@ defmodule JsonSchemaRegistry.SchemasTest do
 
     test "update_schema/3 with valid data updates the schema" do
       schema = schema_fixture()
-      assert {:ok, %Schema{} = up_schema} = Schemas.update_schema(schema.namespace, schema.name, %{ "type" => "number" })
+
+      assert {:ok, %Schema{} = up_schema} =
+               Schemas.update_schema(schema.namespace, schema.name, %{"type" => "number"})
+
       assert up_schema.id != schema.id
-      assert up_schema.content == %{ "type" => "number" }
+      assert up_schema.content == %{"type" => "number"}
       assert up_schema.name == valid_attrs().name
       assert up_schema.namespace == valid_attrs().namespace
       assert up_schema.version == 2

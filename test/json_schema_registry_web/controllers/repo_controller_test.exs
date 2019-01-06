@@ -21,7 +21,7 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
       end
     end
 
-    test "When exists returns the json_schema", %{conn: conn}  do
+    test "When exists returns the json_schema", %{conn: conn} do
       schema = fixture(:schema)
       conn = get(conn, Routes.repo_path(conn, :get, schema.namespace, schema.name))
       body = schema.content
@@ -36,9 +36,15 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
       end
     end
 
-    test "When exists returns the json_schema", %{conn: conn}  do
+    test "When exists returns the json_schema", %{conn: conn} do
       schema = fixture(:schema)
-      conn = get(conn, Routes.repo_path(conn, :get_version, schema.namespace, schema.name, schema.version))
+
+      conn =
+        get(
+          conn,
+          Routes.repo_path(conn, :get_version, schema.namespace, schema.name, schema.version)
+        )
+
       body = schema.content
       assert body = json_response(conn, 200)
     end
@@ -47,21 +53,40 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
   describe "create" do
     test "when does not exist creates one" do
       attrs = valid_attrs()
-      conn = post(conn, Routes.repo_path(conn, :create, attrs.namespace, attrs.name, content: attrs.content))
+
+      conn =
+        post(
+          conn,
+          Routes.repo_path(conn, :create, attrs.namespace, attrs.name, content: attrs.content)
+        )
+
       body = attrs.content
       assert body = json_response(conn, 200)
       assert %Schema{} = Schemas.get_schema!(attrs.namespace, attrs.name)
     end
+
     test "when exists creates one with bumped version" do
       schema = fixture(:schema)
-      conn = post(conn, Routes.repo_path(conn, :create, schema.namespace, schema.name, content: %{"type"=>"number"}))
-      assert %{"type"=>"number"} = json_response(conn, 200)
+
+      conn =
+        post(
+          conn,
+          Routes.repo_path(conn, :create, schema.namespace, schema.name,
+            content: %{"type" => "number"}
+          )
+        )
+
+      assert %{"type" => "number"} = json_response(conn, 200)
       assert %Schema{} = Schemas.get_schema!(schema.namespace, schema.name)
     end
+
     test "when exists creates error" do
       schema = fixture(:schema)
-      conn = post(conn, Routes.repo_path(conn, :create, schema.namespace, schema.name, content: 1))
-      assert %{"errors"=> _} = json_response(conn, 400)
+
+      conn =
+        post(conn, Routes.repo_path(conn, :create, schema.namespace, schema.name, content: 1))
+
+      assert %{"errors" => _} = json_response(conn, 400)
       assert %Schema{} = Schemas.get_schema!(schema.namespace, schema.name)
     end
   end
