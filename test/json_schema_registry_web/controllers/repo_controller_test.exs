@@ -57,7 +57,7 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
       conn =
         post(
           conn,
-          Routes.repo_path(conn, :create, attrs.namespace, attrs.name, content: attrs.content)
+          Routes.repo_path(conn, :create, attrs.namespace, attrs.name, attrs.content)
         )
 
       _body = attrs.content
@@ -71,9 +71,7 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
       conn =
         post(
           conn,
-          Routes.repo_path(conn, :create, schema.namespace, schema.name,
-            content: %{"type" => "number"}
-          )
+          Routes.repo_path(conn, :create, schema.namespace, schema.name, %{"type" => "number"})
         )
 
       assert %{"type" => "number"} = json_response(conn, 200)
@@ -84,7 +82,10 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
       schema = fixture(:schema)
 
       conn =
-        post(conn, Routes.repo_path(conn, :create, schema.namespace, schema.name, content: 1))
+        post(
+          conn,
+          Routes.repo_path(conn, :create, schema.namespace, schema.name, %{"foo" => "bar"})
+        )
 
       assert %{"errors" => _} = json_response(conn, 400)
       assert %Schema{} = Schemas.get_schema!(schema.namespace, schema.name)

@@ -32,11 +32,12 @@ defmodule JsonSchemaRegistry.Schemas.Schema do
   end
 
   def validate_content(changeset) do
-    validate_change(changeset, :content, fn :content, content ->
-      case validate_json_schema(content) do
-        :ok -> []
-        {:error, error} -> [:content, error]
-      end
+    validate_change(changeset, :content, fn
+      :content, content ->
+        case validate_json_schema(content) do
+          :ok -> []
+          {:error, error} -> [:content, error]
+        end
     end)
   end
 end
