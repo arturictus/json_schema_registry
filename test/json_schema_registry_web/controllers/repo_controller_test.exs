@@ -92,8 +92,27 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
     end
   end
 
-  # defp create_schema(_) do
-  #   schema = fixture(:schema)
-  #   {:ok, schema: schema}
-  # end
+  describe "delete" do
+    setup [:create_schema]
+
+    test "namespace name", %{conn: conn, schema: schema} do
+      conn =
+        delete(
+          conn,
+          Routes.repo_path(conn, :delete, schema.namespace, schema.name)
+        )
+
+      _body = schema.content
+      assert _body = json_response(conn, 200)
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Schemas.get_schema!(schema.namespace, schema.name)
+      end
+    end
+  end
+
+  defp create_schema(_) do
+    schema = fixture(:schema)
+    {:ok, schema: schema}
+  end
 end

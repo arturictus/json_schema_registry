@@ -26,7 +26,6 @@ defmodule JsonSchemaRegistryWeb.RepoController do
     end
   end
 
-  # TODO: tests delete
   def delete(conn, _params, %{"namespace" => namespace, "name" => name, "version" => version}) do
     Schemas.delete_schema(namespace, name, version)
     |> delete_response(conn)
@@ -39,15 +38,21 @@ defmodule JsonSchemaRegistryWeb.RepoController do
 
   defp delete_response(action, conn) do
     case action do
-      {:ok, schema} -> render(conn, "delete.json", %{schema: schema})
-      {:error, changeset} -> render(conn, "errors.json", %{changeset: changeset})
+      {_, nil} ->
+        render(conn, "delete.json")
+
+      {:ok, schema} ->
+        render(conn, "delete.json", %{schema: schema})
+
+      {:error, changeset} ->
+        put_status(conn, 400)
+        |> render("errors.json", %{changeset: changeset})
     end
   end
 
   def action(conn, _) do
     keys = Map.take(conn.path_params, ["name", "namespace", "version"])
     params = Map.drop(conn.params, ["name", "namespace", "version"])
-    apply(__MODULE__, action_name(conn),
-      [conn, params, keys])
+    apply(__MODULE__, action_name(conn), [conn, params, keys])
   end
 end
