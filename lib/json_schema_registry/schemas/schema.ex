@@ -28,7 +28,7 @@ defmodule JsonSchemaRegistry.Schemas.Schema do
   def validate_identifier(changeset, field) do
     changeset
     |> validate_length(field, min: 3, max: 100)
-    |> validate_format(field, ~r/^[a-z\-_]+$/)
+    |> validate_format(field, ~r/^[a-z\-_\d]+$/)
   end
 
   def validate_content(changeset) do

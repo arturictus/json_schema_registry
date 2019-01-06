@@ -12,10 +12,8 @@ defmodule JsonSchemaRegistryWeb.Router do
   pipeline :api do
     plug :accepts, ["json"]
     resources "/schemas", JsonSchemaRegistryWeb.SchemaController, except: [:new, :edit]
-    get "/:namespace/:name", JsonSchemaRegistryWeb.RepoController, :get
-    get "/:namespace/:name/:version", JsonSchemaRegistryWeb.RepoController, :get_version
-    post "/:namespace/:name", JsonSchemaRegistryWeb.RepoController, :create
-    delete "/:namespace/:name", JsonSchemaRegistryWeb.RepoController, :delete
+    resources "/:namespace/:name", JsonSchemaRegistryWeb.RepoController, except: [:new, :edit, :update]
+    resources "/:namespace/:name/:version", JsonSchemaRegistryWeb.RepoController, except: [:new, :edit, :update, :index]
   end
 
   scope "/", JsonSchemaRegistryWeb do

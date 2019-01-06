@@ -5,22 +5,18 @@ defmodule JsonSchemaRegistryWeb.RepoController do
 
   action_fallback JsonSchemaRegistryWeb.FallbackController
 
-  def get(conn, _params) do
-    %{"namespace" => namespace, "name" => name} = conn.path_params
-    schema = Schemas.get_schema!(namespace, name)
-    render(conn, "show.json", schema: schema)
-  end
-
-  def get_version(conn, _params) do
-    %{"namespace" => namespace, "name" => name, "version" => version} = conn.path_params
+  def show(conn, _params, %{"namespace" => namespace, "name" => name, "version" => version}) do
     schema = Schemas.get_schema!(namespace, name, version)
     render(conn, "show.json", schema: schema)
   end
 
-  def create(conn, content) do
-    %{"namespace" => namespace, "name" => name} = conn.path_params
+  def show(conn, _params, %{"namespace" => namespace, "name" => name}) do
+    schema = Schemas.get_schema!(namespace, name)
+    render(conn, "show.json", schema: schema)
+  end
 
-    case Schemas.create_or_update(namespace, name, clean_content(conn, content)) do
+  def create(conn, content, %{"namespace" => namespace, "name" => name}) do
+    case Schemas.create_or_update(namespace, name, content) do
       {:ok, schema} ->
         render(conn, "show.json", schema: schema)
 
@@ -30,8 +26,28 @@ defmodule JsonSchemaRegistryWeb.RepoController do
     end
   end
 
-  # TODO: remove name and namespace
-  defp clean_content(conn, content) do
-    content
+  # TODO: tests delete
+  def delete(conn, _params, %{"namespace" => namespace, "name" => name, "version" => version}) do
+    Schemas.delete_schema(namespace, name, version)
+    |> delete_response(conn)
+  end
+
+  def delete(conn, _params, %{"namespace" => namespace, "name" => name}) do
+    Schemas.delete_schema(namespace, name)
+    |> delete_response(conn)
+  end
+
+  defp delete_response(action, conn) do
+    case action do
+      {:ok, schema} -> render(conn, "delete.json", %{schema: schema})
+      {:error, changeset} -> render(conn, "errors.json", %{changeset: changeset})
+    end
+  end
+
+  def action(conn, _) do
+    keys = Map.take(conn.path_params, ["name", "namespace", "version"])
+    params = Map.drop(conn.params, ["name", "namespace", "version"])
+    apply(__MODULE__, action_name(conn),
+      [conn, params, keys])
   end
 end

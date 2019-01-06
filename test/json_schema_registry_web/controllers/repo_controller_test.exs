@@ -14,25 +14,25 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
-  describe "get" do
+  describe "show" do
     test "When empty raises error", %{conn: conn} do
       assert_raise Ecto.NoResultsError, fn ->
-        get(conn, Routes.repo_path(conn, :get, "foo", "bar"))
+        get(conn, Routes.repo_path(conn, :show, "foo", "bar"))
       end
     end
 
     test "When exists returns the json_schema", %{conn: conn} do
       schema = fixture(:schema)
-      conn = get(conn, Routes.repo_path(conn, :get, schema.namespace, schema.name))
+      conn = get(conn, Routes.repo_path(conn, :show, schema.namespace, schema.name))
       _body = schema.content
       assert _body = json_response(conn, 200)
     end
   end
 
-  describe "get_version" do
+  describe "show with version parameter" do
     test "When empty raises error", %{conn: conn} do
       assert_raise Ecto.NoResultsError, fn ->
-        get(conn, Routes.repo_path(conn, :get_version, "foo", "bar", 2))
+        get(conn, Routes.repo_path(conn, :show, "foo", "bar", 2))
       end
     end
 
@@ -42,7 +42,7 @@ defmodule JsonSchemaRegistryWeb.RepoControllerTest do
       conn =
         get(
           conn,
-          Routes.repo_path(conn, :get_version, schema.namespace, schema.name, schema.version)
+          Routes.repo_path(conn, :show, schema.namespace, schema.name, schema.version)
         )
 
       _body = schema.content
